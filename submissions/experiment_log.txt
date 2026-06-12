@@ -1,0 +1,48 @@
+2026-06-05T01:47:11	raw non-ID features with one-hot categorical preprocessing and XGBoost baseline	score=0.92682847	submission=C:\Repos\predict-stellar-class\submissions\submission_xgb_raw_baseline_20260605_014711.csv
+2026-06-05T02:07:31	switch raw non-ID baseline classifier from XGBoost to LightGBM	score=0.95072371	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_raw_baseline_20260605_020731.csv
+2026-06-05T02:19:02	add photometric color indices to the LightGBM raw-feature baseline	score=0.95261861	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_color_indices_20260605_021902.csv
+2026-06-05T02:24:18	add magnitude summary features to the LightGBM color-index baseline	score=0.95268334	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_color_magnitude_summaries_20260605_022417.csv
+2026-06-05T02:32:05	add redshift log and negative-flag transforms to the LightGBM feature set	score=0.95261135	submission=None
+2026-06-05T02:36:46	add spectral_type by galaxy_population categorical cross	score=0.95282763	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_categorical_cross_20260605_023646.csv
+2026-06-05T02:43:36	add trigonometric and unit-sphere spatial angle features	score=0.95361566	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_spatial_angle_features_20260605_024336.csv
+2026-06-05T12:33:12	increase LightGBM num_leaves from 31 to 63	score=0.95577923	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_num_leaves_63_20260605_123311.csv
+2026-06-05T12:44:56	increase LightGBM num_leaves from 63 to 127	score=0.95698159	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_num_leaves_127_20260605_124456.csv
+2026-06-05T12:52:14	increase LightGBM num_leaves from 127 to 255	score=0.95731701	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_num_leaves_255_20260605_125213.csv
+2026-06-05T13:00:22	add min_child_samples=50 regularization to LightGBM num_leaves=255	score=0.95733830	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_num_leaves_255_min_child_50_20260605_130022.csv
+2026-06-05T13:12:20	use num_leaves=127 with learning_rate=0.035 and n_estimators=260	score=0.95699875	submission=None
+2026-06-05T13:20:45	reduce LightGBM colsample_bytree from 0.9 to 0.8	score=0.95725870	submission=None
+2026-06-05T14:23:00	increase LightGBM reg_lambda from 1.0 to 2.0	score=0.95720325	submission=None
+2026-06-06T13:30:35	apply Optuna trial 84 LightGBM hyperparameters after 101-trial search	score=0.95795106	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_optuna_trial_84_20260606_133035.csv
+2026-06-06T16:56:38	increase Optuna trial 84 n_estimators from 180 to 200	score=0.95797470	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_optuna_trial_84_n_estimators_200_20260606_165638.csv
+2026-06-06T17:05:51	increase Optuna trial 84 n_estimators from 200 to 220	score=0.95783986	submission=None
+2026-06-06T18:09:27	train OOF base model lightgbm_optuna_trial_49 and evaluate stacking usefulness	score=0.95773193	submission=None
+2026-06-06T18:20:10	train OOF base model xgboost_hist_depth_8 and evaluate stacking usefulness	score=0.95623690	submission=None
+2026-06-06T19:15:36	train OOF base model catboost_native_depth_8 and evaluate stacking usefulness	score=0.95288432	submission=None
+2026-06-06T20:42:25	train OOF base model xgboost_hist_depth_10 and evaluate stacking usefulness	score=0.95608769	submission=None
+2026-06-06T22:40:22	run 10-trial XGBoost Optuna search and evaluate best OOF base model xgboost_optuna_trial_0	score=0.95644307	submission=None
+2026-06-06T23:29:58	train OOF base model lightgbm_optuna_trial_65 and evaluate stacking usefulness	score=0.95782915	submission=None
+2026-06-06T23:38:02	train OOF base model lightgbm_optuna_trial_81 and evaluate stacking usefulness	score=0.95789852	submission=None
+2026-06-06T23:43:40	train OOF base model lightgbm_optuna_trial_31 and evaluate stacking usefulness	score=0.95783529	submission=None
+2026-06-07T00:09:34	optimize no-bias weighted blend across LightGBM champion plus diversity trials 49, 65, 81, and 31	score=0.95808170	submission=C:\Repos\predict-stellar-class\submissions\submission_blend_lightgbm_diversity_trials_tiny_no_bias_20260607_000934.csv
+2026-06-07T15:35:53	optimize deterministic local weighted blend with QSO/STAR class-bias tuning across LightGBM champion plus diversity trials 49, 65, 81, and 31	score=0.95877923	submission=C:\Repos\predict-stellar-class\submissions\submission_blend_lightgbm_deterministic_local_20260607_153503.csv
+2026-06-08T14:49:18	train restrained entity-embedding MLP OOF diversity candidate	score=0.94602947	submission=None
+2026-06-08T14:49:18	blend deterministic LightGBM ensemble with entity-embedding MLP at candidate weight 0.45	score=0.96175926	submission=C:\Repos\predict-stellar-class\submissions\submission_blend_deterministic_lgbm_entity_mlp_w045_20260608_144924.csv
+2026-06-08T15:22:27	train longer entity-embedding MLP and replace previous MLP in deterministic LightGBM blend at candidate weight 0.45	score=0.96225362	submission=C:\Repos\predict-stellar-class\submissions\submission_blend_deterministic_lgbm_entity_mlp_e12_w045_20260608_152233.csv
+2026-06-08T16:17:49	train e20 entity-embedding MLP neural tuning variant; rejected because replacement blend did not beat current champion	score=0.95060475	submission=None
+2026-06-08T16:34:32	fine-search e12 MLP blend weight from 0.35 to 0.55 and accept weight 0.435001	score=0.96237557	submission=C:\Repos\predict-stellar-class\submissions\submission_blend_deterministic_lgbm_entity_mlp_e12_w0435001_20260608_163434.csv
+2026-06-09T14:15:46	train Kaggle 2x T4 FT-Transformer DDP diversity candidate; standalone below champion, pending local blend evaluation	score=0.95316013	submission=submissions\submission_ft_transformer_ddp_t4.csv
+2026-06-09T14:29:54	evaluate current champion plus Kaggle FT-Transformer tiny-weight blend; rejected because +0.00003094 is below 0.0001 usefulness threshold	score=0.96240651	submission=None
+2026-06-09T15:02:15	train logistic-regression meta-learner on champion blend, deterministic LightGBM blend, e12 MLP, and FT probabilities	score=0.96657219	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_c025_20260609_150225.csv
+2026-06-10T14:05:36	run C-value sensitivity for logistic meta-learner and accept C=0.10	score=0.96660505	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_c010_20260610_140547.csv
+2026-06-10T14:45:29	tune class-specific logit biases on C=0.10 meta-learner and accept QSO=0.012 STAR=0.012	score=0.96663108	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_c010_bias_20260610_144537.csv
+2026-06-10T15:11:09	run logistic meta-learner ablation without FT-Transformer; rejected because best no-FT CV is below champion	score=0.96658018	submission=None
+2026-06-10T16:24:12	train restrained GBDT leaf-embedding neural stacker; rejected because standalone and blend lift are below usefulness threshold	score=0.96661637	submission=None
+2026-06-11T11:01:36	train Kaggle 2x T4 TabNet diversity candidate; rejected because standalone CV is far below champion	score=0.94992297	submission=None
+2026-06-11T12:30:05	add existing CatBoost OOF probabilities to the C=0.10 logistic meta-learner; accepted because CV improved over champion	score=0.96666589	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_c010_20260611_122755.csv
+2026-06-11T14:00:28	retry CatBoost retrain with fold validation and od_wait=120; rejected because meta-stack variants did not beat current champion	score=0.96341367	submission=None
+2026-06-11T15:12:47	add conservative LightGBM DART probabilities to the C=0.10 logistic meta-learner; accepted because CV improved over champion	score=0.96699299	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_20260611_151211.csv
+2026-06-11T15:50:52	tune class-specific logit biases on DART meta-stack; accepted QSO=-0.030 STAR=0.014	score=0.96700608	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_bias_20260611_154836.csv
+2026-06-11T16:30:04	run focused C-value sensitivity on expanded DART meta-stack; rejected because best C=0.125 did not beat current champion	score=0.96697817	submission=None
+2026-06-11T16:53:45	rerun wider C-value sensitivity on expanded DART meta-stack with longer timeout; rejected because best C=0.05 did not beat current champion	score=0.96699861	submission=None
+2026-06-11T19:09:59	train photometry/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96692962	submission=None
+2026-06-11T19:21:52	train categorical/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because standalone was very weak and meta-stack CV fell below champion	score=0.96693867	submission=None
