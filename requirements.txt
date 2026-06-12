@@ -1,0 +1,18 @@
+# Core data science stack
+numpy
+pandas
+scikit-learn
+joblib
+
+# Gradient boosting models
+lightgbm
+xgboost
+catboost
+
+# Experiment tracking and hyperparameter search
+mlflow
+optuna
+
+# Neural tabular models
+torch
+pytorch-tabnet
