@@ -1,0 +1,82 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and local agent configuration
+.vscode/
+.idea/
+.codex/
+
+# Python caches and test artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments and local environment files
+.venv/
+venv/
+env/
+ENV/
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLflow and experiment tracking artifacts
+mlruns/
+mlartifacts/
+
+# Trained model artifacts and checkpoints
+models/
+*.joblib
+*.pkl
+*.pickle
+*.pt
+*.pth
+*.ckpt
+*.cbm
+catboost_info/
+
+# Competition data and generated ensemble artifacts
+data/raw/*
+!data/raw/
+!data/raw/.gitkeep
+!data/raw/column_mapping.md
+
+data/ensemble/
+data/interim/
+data/external/
+
+# Keep processed Markdown reports trackable, ignore generated processed data.
+data/processed/*
+!data/processed/
+!data/processed/.gitkeep
+!data/processed/*.md
+
+# Generated submissions and search databases.
+# Keep lightweight run metadata trackable.
+submissions/*
+!submissions/
+!submissions/.gitkeep
+!submissions/best_score.txt
+!submissions/experiment_log.txt
+
+# Local database/search state
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
