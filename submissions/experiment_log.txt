@@ -46,3 +46,4 @@
 2026-06-11T16:53:45	rerun wider C-value sensitivity on expanded DART meta-stack with longer timeout; rejected because best C=0.05 did not beat current champion	score=0.96699861	submission=None
 2026-06-11T19:09:59	train photometry/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96692962	submission=None
 2026-06-11T19:21:52	train categorical/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because standalone was very weak and meta-stack CV fell below champion	score=0.96693867	submission=None
+2026-06-11T23:01:36	train calibrated FT-Transformer with class-balanced focal loss, stronger weight decay, and SWA; add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96696908	submission=None
