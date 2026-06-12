@@ -91,6 +91,12 @@ This file keeps durable modeling decisions and lessons. Full chronological run h
   - Best tiny blend lift below materiality threshold.
   - Decision: reject direct blend, keep FT as a logistic meta feature.
 
+- Calibrated FT-Transformer focal/SWA variant:
+  - `ft_transformer_calibrated_focal_swa`
+  - Standalone CV `0.94284491`
+  - Expanded DART meta-stack CV `0.96696908`
+  - Decision: reject this exact calibration recipe; class-balanced focal loss plus stronger weight decay reduced standalone quality and did not improve the meta-stack.
+
 - Photometry/redshift-only specialist:
   - Standalone CV `0.93679082`
   - Meta-stack CV `0.96692962`
@@ -109,21 +115,21 @@ This file keeps durable modeling decisions and lessons. Full chronological run h
 
 Priority candidates:
 
-1. Targeted FT-Transformer calibration/error-control variant.
-   - Consider class-balanced focal loss, stronger weight decay, stochastic weight averaging, or blend-aware diagnostics.
-   - Evaluate by OOF/meta-stack improvement, not standalone CV alone.
-
-2. A materially different LightGBM objective/config beyond the accepted conservative DART.
-   - Examples: log-loss-first GBDT, class-weight variants, or a DART variant with different dropout/regularization.
+1. Different LightGBM objective/config family beyond the accepted conservative DART.
+   - Examples: log-loss-first GBDT, class-weight variants, or another DART configuration with materially different dropout/regularization.
    - Must be evaluated as a meta feature.
 
-3. Error-focused binary specialists.
+2. Error-focused binary specialists.
    - Target hardest one-vs-one or one-vs-rest confusions.
    - Feed fold-safe OOF probabilities into the meta-learner.
 
-4. Kernel approximation model.
+3. Kernel approximation model.
    - Fold-safe `Nystroem` or `RBFSampler` plus logistic regression.
    - Proceed only if runtime is reasonable and OOF errors differ materially.
+
+4. Further FT-Transformer work only with a materially different hypothesis.
+   - Do not repeat the focal/SWA recipe.
+   - Consider only if diagnostics point to a specific calibration or class-confusion failure mode.
 
 ## Guardrails
 
