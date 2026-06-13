@@ -150,6 +150,28 @@ def default_model_specs() -> dict[str, ModelSpec]:
             },
         ),
         ModelSpec(
+            "lightgbm_gbdt_balanced_low_lr",
+            "lightgbm",
+            {
+                "boosting_type": "gbdt",
+                "objective": "multiclass",
+                "num_class": len(config.CLASS_LABELS),
+                "class_weight": "balanced",
+                "n_estimators": 520,
+                "max_depth": -1,
+                "num_leaves": 96,
+                "min_child_samples": 70,
+                "learning_rate": 0.032,
+                "subsample": 0.90,
+                "colsample_bytree": 0.80,
+                "reg_lambda": 7.0,
+                "reg_alpha": 3.0,
+                "random_state": config.SEED,
+                "n_jobs": config.N_JOBS,
+                "verbosity": -1,
+            },
+        ),
+        ModelSpec(
             "lightgbm_photometry_redshift_specialist",
             "lightgbm",
             _lgbm_params(
