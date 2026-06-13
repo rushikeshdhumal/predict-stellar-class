@@ -1,38 +1,40 @@
-# Supervised Ensemble And Stacking Plan
+# Ensemble Plan
 
 ## Current State
 
-- Goal: chase `0.972` balanced accuracy without pseudo-labeling or test-label leakage.
-- Selection rule: fixed stratified 5-fold CV remains the source of truth.
-- Current CV champion: `0.96700608`.
-- Current public/test best: `0.96805` from the un-biased old-CatBoost meta-stack.
-- Current `best.csv`: biased DART meta-stack, because it is the CV champion.
-- Do not use `id` as a feature.
+- Goal: improve 3-class balanced accuracy without pseudo-labeling, test-label leakage, or transductive tricks.
+- Selection rule: fixed stratified 5-fold CV is the primary acceptance metric.
+- Current CV champion: `meta_pocket_switch_candidate_tradeoff_v1`
+  - CV balanced accuracy: `0.96723940`
+  - Public/test score: `0.96826`
+  - Submission: `submissions\submission_meta_pocket_switch_candidate_tradeoff_v1_20260612_173536.csv`
+  - OOF: `data\ensemble\stacking\meta_pocket_switch_candidate_tradeoff_v1_oof.csv`
+  - Test probabilities: `data\ensemble\stacking\meta_pocket_switch_candidate_tradeoff_v1_test_proba.csv`
+- Current public/test best: `meta_rich_lgbm_active_rescue_stronger_reg`
+  - CV balanced accuracy: `0.96712409`
+  - Public/test score: `0.96832`
+  - Submission: `submissions\submission_meta_rich_lgbm_active_rescue_stronger_reg_20260612_124931.csv`
+- Current acceptance threshold: mean 5-fold CV balanced accuracy must beat `0.96723940`.
 
-## Champion Artifacts
+## Current Champion Architecture
 
-### CV Champion
+The CV champion is a small deployable post-processing layer on top of the strongest rich LightGBM stacker.
 
-- Model: `meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_bias`
-- CV balanced accuracy: `0.96700608`
-- Public/test balanced accuracy: `0.96787`
-- Biases: `GALAXY=0.0`, `QSO=-0.030`, `STAR=0.014`
-- OOF: `data\ensemble\stacking\meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_bias_oof.csv`
-- Test probabilities: `data\ensemble\stacking\meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_bias_test_proba.csv`
-- Submission: `submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010_bias_20260611_154836.csv`
+1. Start from `meta_rich_lgbm_active_rescue_stronger_reg`.
+2. Use fixed, hand-picked rules from candidate tradeoff diagnostics.
+3. In those narrow pockets, replace champion probabilities with probabilities from near-miss candidates:
+   - `meta_rich_lgbm_active_rescue_more_trees`
+   - `meta_rich_lgbm_active_rescue_no_context`
+   - `meta_rich_lgbm_active_rescue_conservative`
+4. The accepted policy is `cumulative_all`, five deployable rules using only champion prediction plus original non-ID features (`g_r`, `u_g`, `spectral_type`).
 
-### Public/Test Best
+This improved OOF balanced accuracy and all three OOF recalls, but it did not beat the previous public/test best. Treat it as the CV champion, not yet as evidence that rule expansion transfers well.
 
-- Model: `meta_logreg_champion_lgbm_mlp_ft_catboost_c010`
-- CV balanced accuracy: `0.96666589`
-- Public/test balanced accuracy: `0.96805`
-- OOF: `data\ensemble\stacking\meta_logreg_champion_lgbm_mlp_ft_catboost_c010_oof.csv`
-- Test probabilities: `data\ensemble\stacking\meta_logreg_champion_lgbm_mlp_ft_catboost_c010_test_proba.csv`
-- Submission: `submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_c010_20260611_122755.csv`
+## Strongest Base/Stacking Direction
 
-## Active Base Artifacts
+The strongest durable architecture is rich meta-stacking over saved OOF/test probabilities.
 
-Use these as the main meta-stack base set unless a new experiment has a specific reason to remove one:
+Use these base artifacts as the default rich stack inputs unless a new experiment has a specific reason to change them:
 
 - `blend_deterministic_lgbm_entity_mlp_e12_w0435001`
 - `blend_lightgbm_deterministic_local`
@@ -40,95 +42,70 @@ Use these as the main meta-stack base set unless a new experiment has a specific
 - `ft_transformer_ddp_t4`
 - `catboost_native_depth_8`
 - `lightgbm_dart_conservative`
+- `xgboost_hist_depth_8`
+- `xgboost_optuna_trial_0`
+- `lightgbm_gbdt_balanced_low_lr`
 
-The current strongest un-biased DART meta-stack over this set is:
+The key rich meta-features are raw/log base probabilities, entropy, top-margin, pairwise logit gaps, cross-base probability aggregates, vote counts, champion deltas, and small domain context.
 
-- Model: `meta_logreg_champion_lgbm_mlp_ft_catboost_dart_c010`
-- CV balanced accuracy: `0.96699299`
-- Public/test balanced accuracy: `0.96804`
+## Important Lessons
 
-## Infrastructure Rules
+- Logistic stacking on saved OOF log probabilities produced the first major ensemble jump.
+- Rich LightGBM meta-stacking with strong regularization is the best general architecture so far.
+- The old weak CatBoost and conservative DART remain useful as diversity/meta features despite weak standalone CV.
+- FT-Transformer is useful inside stacks, but the tested focal/SWA calibration variant was rejected.
+- Removing domain context was close in CV (`0.96710695`) but lower publicly (`0.96812`), so keep context unless testing a specific transfer hypothesis.
+- The accepted pocket switch improved CV (`0.96723940`) but public/test fell to `0.96826`, below the rich stacker’s `0.96832`; rule-based gains may overfit small OOF pockets.
+- Pocket-switch stability audit showed `cumulative_all` was positive on all folds and better than reduced policies, so do not replace it with a reduced policy.
 
-- Save OOF probabilities and averaged test probabilities for every useful base candidate.
-- Standard OOF schema: `id`, `fold`, `y_true`, `proba_GALAXY`, `proba_QSO`, `proba_STAR`.
-- Keep all base models on the same fixed 5 folds.
+## Rejected Directions
+
+Do not repeat these without a materially different hypothesis:
+
+- Stronger CatBoost retrain as replacement/additive feature.
+- Photometry/redshift-only or categorical/redshift-only specialists.
+- TabNet diversity branch.
+- Randomized RBF/kernel approximation branch in its tested form.
+- Scalar binary specialist margin features.
+- Hard-gated hierarchy using STAR-vs-rest then GALAXY-vs-QSO.
+- Soft residual reliability blend in its tested form.
+- Crude class-weight tilts for GALAXY preservation; they over-correct GALAXY and damage STAR.
+- Broad expansion of pocket-switch rules based only on tiny OOF pockets.
+
+## Reports
+
+Human-readable diagnostics live in `docs\reports`.
+
+- `docs\reports\champion_error_diagnostics_20260612_110056.md`
+- `docs\reports\candidate_tradeoff_diagnostics_20260612_172857.md`
+- `docs\reports\pocket_switch_stability_report_20260612_174346.md`
+
+Machine-readable diagnostic CSVs remain in `data\processed`.
+
+## Next Best Steps
+
+1. Prefer transfer-aware validation before more rule work.
+   - The CV champion did not become the public/test best.
+   - Any new pocket-switch experiment should have a larger CV lift than `+0.0001` and a reason it should transfer better.
+
+2. If continuing pocket switches, test only a tiny fixed set.
+   - No broad rule search without confirmation.
+   - Require positive fold stability and balanced recall impact.
+   - Compare against both CV champion and public/test best behavior.
+
+3. If returning to models, use a materially new error target.
+   - Do not run another generic full-feature GBDT.
+   - A candidate must target a specific confusion/calibration gap shown in diagnostics.
+
+4. FT work is only worth revisiting with a new diagnosis.
+   - Do not repeat the focal/SWA recipe.
+   - Revisit only if diagnostics show FT uniquely rescues a stable pocket.
+
+## Guardrails
+
+- Never use `id` as a feature.
+- Keep all base models and stackers on fixed stratified 5-fold CV.
+- Save OOF probabilities and averaged test probabilities for any useful candidate.
 - Probability rows must sum to 1.
-- `ModelSpec.feature_columns` supports feature-subset specialist models while preserving the same OOF/test artifact format.
-- For stacking, use probabilities or log probabilities only; avoid hard voting.
-
-## Acceptance Rules
-
-Accept a new ensemble only if mean 5-fold CV balanced accuracy beats `0.96700608`.
-
-A base model is useful if it beats the champion alone, or if it satisfies all of:
-
-- CV balanced accuracy is within `0.003` of the champion, or there is a clear prior reason to test it as a meta-feature.
-- Mean Spearman correlation versus champion OOF probabilities is below `0.985`, or rescue-rate analysis shows complementarity.
-- OOF blend or meta-stack improvement is at least `0.0001`.
-
-For diversity checks, compute:
-
-- Spearman correlation per class probability, averaged across classes.
-- `disagreement_rate`
-- `rescue_rate`
-- `new_error_rate`
-- `shared_error_rate`
-- Small-weight OOF blend lift.
-
-Spearman is only a redundancy filter. The decisive signal is OOF blend/meta improvement plus rescue/new-error behavior.
-
-## Lessons To Preserve
-
-- Logistic meta-learning on saved OOF log probabilities is the most important lift so far.
-- The old weak CatBoost is useful as a residual meta-feature even though it is weak standalone.
-- Stronger retrained CatBoost improved standalone CV to `0.96341367`, but did not improve the meta-stack.
-- Conservative DART is weak standalone (`0.95323340`) but useful in the meta-stack; weak standalone models can still matter if calibrated and different.
-- DART class-bias tuning produced the CV champion but transferred poorly to public/test. Avoid more tiny post-hoc bias sweeps unless the CV gain is much larger or stability diagnostics support it.
-- Wider C-grid tuning on the expanded DART meta-stack did not beat the current CV champion; best was `C=0.05` at `0.96699861`.
-- Removing FT from the logistic stack hurt CV; keep FT as a meta feature.
-- GBDT leaf-embedding stacker was close but not useful enough; best blend gain was far below `0.0001`.
-- Photometry/redshift-only and categorical/redshift-only specialists both hurt the meta-stack. Do not tune those exact specialist branches without a new feature hypothesis.
-- TabNet was too weak (`0.94992297`) and should not be tuned further.
-
-## Rejected Branches
-
-- `catboost_native_balanced_depth_7_od120`: stronger standalone, not useful as replacement/additive meta feature.
-- `lightgbm_photometry_redshift_specialist`: standalone `0.93679082`, meta-stack `0.96692962`.
-- `lightgbm_categorical_redshift_specialist`: standalone `0.86026112`, meta-stack `0.96693867`.
-- `leaf_embedding_lgbm84_meta_probs_small`: standalone `0.96661637`, blend gain only `0.00000677`.
-- `tabnet_2gpu_diversity`: standalone `0.94992297`.
-- Direct FT weighted blend: tiny lift only, below materiality; FT remains useful inside logistic stacking.
-
-## Next Candidate Queue
-
-1. Targeted FT-Transformer calibration/error-control variant.
-   - Do not simply make the model larger.
-   - Try class-balanced focal loss, stronger weight decay, stochastic weight averaging, or blend-aware diagnostics.
-   - Accept only through OOF/meta-stack improvement.
-
-2. Different LightGBM objective/config family beyond the accepted DART.
-   - Examples: log-loss-first GBDT, class-weight variants, or another DART configuration with materially different dropout/regularization.
-   - Evaluate as a meta-feature, not only standalone.
-
-3. Error-focused binary specialists.
-   - Target hardest class confusions with one-vs-one or one-vs-rest probability features.
-   - Feed OOF probabilities into the meta-learner.
-
-4. Kernel approximation model.
-   - Fold-safe `Nystroem` or `RBFSampler` plus logistic regression.
-   - Proceed only if runtime is reasonable and OOF errors differ materially.
-
-## Test Checklist
-
-- Verify each OOF artifact covers every training row exactly once.
-- Verify test probabilities are averaged across all 5 fold models.
-- Verify probability rows sum to 1.
-- Verify `id` is never used as a feature.
-- Compare balanced accuracy, log loss, per-class recall, and confusion matrix for every accepted candidate.
-- Record every meaningful accept/reject in `DECISIONS.md` and `submissions/experiment_log.txt`.
-
-## Assumptions
-
-- Use aggressive compute budget when justified.
-- Installing CatBoost is allowed.
-- No pseudo-labeling or transductive test-feature techniques in this phase.
+- Use standard OOF schema: `id`, `fold`, `y_true`, `proba_GALAXY`, `proba_QSO`, `proba_STAR`.
+- Log meaningful results in `submissions\experiment_log.txt` and `DECISIONS.md`.
