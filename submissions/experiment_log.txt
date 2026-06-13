@@ -47,3 +47,26 @@
 2026-06-11T19:09:59	train photometry/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96692962	submission=None
 2026-06-11T19:21:52	train categorical/redshift-only LightGBM specialist and add to expanded DART meta-stack; rejected because standalone was very weak and meta-stack CV fell below champion	score=0.96693867	submission=None
 2026-06-11T23:01:36	train calibrated FT-Transformer with class-balanced focal loss, stronger weight decay, and SWA; add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96696908	submission=None
+2026-06-11T23:23:27	train class-balanced low-learning-rate LightGBM GBDT and add to expanded DART meta-stack; rejected because meta-stack CV narrowly missed champion	score=0.96699784	submission=None
+2026-06-11T23:35:14	submit standalone lightgbm_gbdt_balanced_low_lr for transfer check; public/test score was below current best	score=0.96671	submission=C:\Repos\predict-stellar-class\submissions\submission_lightgbm_gbdt_balanced_low_lr_20260611_232724.csv
+2026-06-11T23:39:21	submit expanded DART meta-stack plus lightgbm_gbdt_balanced_low_lr for transfer check; public/test score did not beat current best	score=0.96800	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_logreg_champion_lgbm_mlp_ft_catboost_dart_lgbbalanced_c010_20260611_233740.csv
+2026-06-11T23:50:01	train GALAXY-vs-STAR LightGBM binary specialist and add to expanded DART meta-stack; rejected because meta-stack CV fell below champion	score=0.96695518	submission=None
+2026-06-12T00:11:42	train randomized RBF kernel approximation with SGD log-loss; rejected because standalone CV was weak and blend gain was below usefulness threshold	score=0.91960905	submission=None
+2026-06-12T12:10:42	train rich-feature logistic meta-stacker with domain context over active/high-rescue bases; best=c_0.05	score=0.96367287	submission=None
+2026-06-12T12:14:16	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=conservative	score=0.96706996	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_rich_lgbm_active_rescue_conservative_20260612_121416.csv
+2026-06-12T12:46:16	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=more_trees; lgbm_variant=more_trees	score=0.96707576	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_rich_lgbm_active_rescue_more_trees_20260612_124616.csv
+2026-06-12T12:49:32	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=stronger_reg; lgbm_variant=stronger_reg	score=0.96712409	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_rich_lgbm_active_rescue_stronger_reg_20260612_124931.csv
+2026-06-12T12:53:11	train rich-feature lightgbm meta-stacker without domain context over active/high-rescue bases; best=conservative; lgbm_variant=conservative	score=0.96710695	submission=None
+2026-06-12T12:56:11	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=conservative; lgbm_variant=conservative	score=0.96685832	submission=None
+2026-06-12T13:19:14	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=stronger_reg; lgbm_variant=stronger_reg; scalar specialist features	score=0.96710447	submission=None
+2026-06-12T13:21:37	train GALAXY-vs-QSO LightGBM binary specialist for scalar margin feature experiment	score=0.98348167	submission=None
+2026-06-12T13:23:51	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=stronger_reg; lgbm_variant=stronger_reg; scalar specialist features	score=0.96704885	submission=None
+2026-06-12T13:27:16	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=stronger_reg; lgbm_variant=stronger_reg; scalar specialist features	score=0.96703453	submission=None
+2026-06-12T13:40:31	train STAR-vs-rest LightGBM specialist for hierarchical gated ensemble	score=0.97196771	submission=None
+2026-06-12T13:41:14	run hierarchical gated ensemble with STAR-vs-rest gate and GALAXY-vs-QSO specialist; star_threshold=0.55; gq_threshold=0.75	score=0.96616922	submission=None
+2026-06-12T15:05:53	run soft residual reliability logit blend anchored on rich LGBM champion; alpha=0.04	score=0.96711546	submission=None
+2026-06-12T15:14:14	train rich-feature lightgbm meta-stacker with domain context over active/high-rescue bases; best=galaxy_guard; lgbm_variant=galaxy_guard	score=0.95842451	submission=None
+2026-06-12T17:29:11	analyze champion-vs-candidate deployable tradeoff pockets	score=0.96712409	submission=None
+2026-06-12T17:35:36	run tiny deployable pocket switch ensemble; best_policy=cumulative_all	score=0.96723940	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_pocket_switch_candidate_tradeoff_v1_20260612_173536.csv
+2026-06-12T17:39:28	public/test score for meta_pocket_switch_candidate_tradeoff_v1	score=0.96826	submission=C:\Repos\predict-stellar-class\submissions\submission_meta_pocket_switch_candidate_tradeoff_v1_20260612_173536.csv
+2026-06-12T17:44:01	audit pocket-switch fold stability; cumulative_all remained best; no reduced policy accepted	score=0.96723940	submission=None
